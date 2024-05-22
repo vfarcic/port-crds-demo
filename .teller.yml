@@ -1,0 +1,8 @@
+project: dot
+providers:
+  google_secretmanager:
+    env:
+      PORT_CLIENT_ID:
+        path: projects/vfarcic/secrets/port-client-id/versions/1
+      PORT_CLIENT_SECRET:
+        path: projects/vfarcic/secrets/port-client-secret/versions/1
