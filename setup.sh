@@ -168,6 +168,11 @@ elif [[ "$HYPERSCALER" == "azure" ]]; then
 
     az login
 
+    RESOURCE_GROUP=dot-$(date +%Y%m%d%H%M%S)
+    echo "export RESOURCE_GROUP=$RESOURCE_GROUP" >> .env
+
+    az group create --name $RESOURCE_GROUP --location eastus
+
     SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
     az ad sp create-for-rbac --sdk-auth --role Owner \
