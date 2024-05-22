@@ -4,9 +4,17 @@ metadata:
   name: silly-demo
   namespace: a-team
 spec:
+  compositeDeletePolicy: Background
   compositionRef:
     name: google-postgresql
+  compositionRevisionRef:
+    name: google-postgresql-e1e8cde
+  compositionUpdatePolicy: Automatic
   id: silly-demo
   parameters:
-    size: small
+    size: medium
     version: "15"
+  resourceRef:
+    apiVersion: devopstoolkitseries.com/v1alpha1
+    kind: SQL
+    name: silly-demo-6vxrn
