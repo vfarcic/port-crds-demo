@@ -1,2 +1,4 @@
 /.env
 /gcp-creds.json
+/azure-creds.json
+/aws-creds.conf

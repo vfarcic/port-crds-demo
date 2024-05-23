@@ -42,6 +42,9 @@ kubectl apply \
 
 kubectl create namespace a-team
 
+kubectl --namespace a-team apply \
+    --filename crossplane-config/db-secret.yaml
+
 helm upgrade --install crossplane crossplane \
     --repo https://charts.crossplane.io/stable \
     --namespace crossplane-system --create-namespace --wait
@@ -167,11 +170,6 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
 elif [[ "$HYPERSCALER" == "azure" ]]; then
 
     az login
-
-    RESOURCE_GROUP=dot-$(date +%Y%m%d%H%M%S)
-    echo "export RESOURCE_GROUP=$RESOURCE_GROUP" >> .env
-
-    az group create --name $RESOURCE_GROUP --location eastus
 
     SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 
