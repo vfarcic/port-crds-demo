@@ -1,0 +1,12 @@
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: silly-demo
+  namespace: a-team
+spec:
+  compositionRef:
+    name: aws-postgresql
+  id: silly-demo
+  parameters:
+    size: small
+    version: "16.2"
