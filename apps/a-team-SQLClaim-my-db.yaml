@@ -1,0 +1,10 @@
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: SQLClaim
+metadata:
+  name: my-db
+  namespace: a-team
+spec:
+  id: my-db
+  parameters:
+    size: medium
+    version: "12.6"
