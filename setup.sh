@@ -55,12 +55,6 @@ kubectl apply \
 kubectl apply \
     --filename crossplane-config/provider-kubernetes-incluster.yaml
 
-kubectl apply --filename crossplane-config/dot-sql.yaml
-
-kubectl apply --filename crossplane-config/dot-app.yaml
-
-kubectl apply --filename crossplane-config/dot-kubernetes.yaml
-
 helm upgrade --install port-k8s-exporter port-k8s-exporter \
     --repo https://port-labs.github.io/helm-charts \
     --namespace port-k8s-exporter --create-namespace \
@@ -78,6 +72,12 @@ echo '* Open https://app.getport.io/settings/data-sources in a browser
 * Close the popup' \
     | gum format
 gum input --placeholder "Press the enter key to continue."
+
+kubectl apply --filename crossplane-config/dot-sql.yaml
+
+kubectl apply --filename crossplane-config/dot-app.yaml
+
+kubectl apply --filename crossplane-config/dot-kubernetes.yaml
 
 helm upgrade --install argocd argo-cd \
     --repo https://argoproj.github.io/argo-helm \
