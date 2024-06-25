@@ -188,3 +188,9 @@ fi
 
 kubectl wait --for=condition=healthy provider.pkg.crossplane.io \
     --all --timeout=600s
+
+git add .
+
+git commit -m "Setup"
+
+git push
