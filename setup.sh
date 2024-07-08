@@ -116,15 +116,24 @@ if [[ "$HYPERSCALER" == "google" ]]; then
 
     export SA="${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com"
 
-    gcloud iam service-accounts create $SA_NAME --project $PROJECT_ID
+    gcloud iam service-accounts create $SA_NAME \
+        --project $PROJECT_ID
 
     export ROLE=roles/admin
 
-    gcloud projects add-iam-policy-binding --role $ROLE $PROJECT_ID --member serviceAccount:$SA
+    gcloud projects add-iam-policy-binding \
+        --role $ROLE $PROJECT_ID --member serviceAccount:$SA
 
-    gcloud iam service-accounts keys create gcp-creds.json --project $PROJECT_ID --iam-account $SA
+    gcloud iam service-accounts keys create gcp-creds.json \
+        --project $PROJECT_ID --iam-account $SA
 
-    kubectl --namespace crossplane-system create secret generic gcp-creds --from-file creds=./gcp-creds.json
+    kubectl --namespace crossplane-system \
+        create secret generic gcp-creds \
+        --from-file creds=./gcp-creds.json
+
+    kubectl wait \
+        --for=condition=healthy provider.pkg.crossplane.io \
+        --all --timeout=600s
 
     echo "apiVersion: gcp.upbound.io/v1beta1
 kind: ProviderConfig
@@ -164,6 +173,10 @@ aws_secret_access_key = $AWS_SECRET_ACCESS_KEY
         create secret generic aws-creds \
         --from-file creds=./aws-creds.conf
 
+    kubectl wait \
+        --for=condition=healthy provider.pkg.crossplane.io \
+        --all --timeout=600s
+
     kubectl apply \
         --filename crossplane-config/provider-config-aws.yaml
 
@@ -181,13 +194,14 @@ elif [[ "$HYPERSCALER" == "azure" ]]; then
         create secret generic azure-creds \
         --from-file creds=./azure-creds.json
 
+    kubectl wait \
+        --for=condition=healthy provider.pkg.crossplane.io \
+        --all --timeout=600s
+
     kubectl apply \
         --filename crossplane-config/provider-config-azure.yaml
 
 fi
-
-kubectl wait --for=condition=healthy provider.pkg.crossplane.io \
-    --all --timeout=600s
 
 git add .
 
