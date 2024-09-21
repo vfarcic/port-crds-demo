@@ -1,0 +1,231 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: compositeclusters.devopstoolkitseries.com
+  labels:
+    idp: 'true'
+spec:
+  connectionSecretKeys:
+  - kubeconfig
+  - value
+  defaultCompositionRef:
+    name: cluster-aws
+  group: devopstoolkitseries.com
+  names:
+    kind: CompositeCluster
+    plural: compositeclusters
+  claimNames:
+    kind: ClusterClaim
+    plural: clusterclaims
+  versions:
+  - name: v1alpha1
+    served: true
+    referenceable: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              id:
+                type: string
+                description: ID of this Cluster that other objects can refer.
+              parameters:
+                description: Parameters used to customize the cluster
+                type: object
+                properties:
+                  version:
+                    description: The Kubernetes version for the cluster.
+                    type: string
+                  nodeSize:
+                    description: The size of the nodes; small, medium, large.
+                    type: string
+                    default: small
+                  minNodeCount:
+                    description: The minimum number of nodes.
+                    type: integer
+                    default: 1
+                  namespaces:
+                    description: List of Namespaces that should be created in the cluster
+                    type: array
+                    default:
+                    - dev
+                    - production
+                    items:
+                      type: string
+                  usage:
+                    description: Whether Crossplane `Usage` (currently alpha feature) is enabled.
+                    type: object
+                    properties:
+                      enabled:
+                        type: boolean
+                        default: false
+                    required: []
+                  apps:
+                    type: object
+                    description: List of apps that should be installed in the cluster
+                    properties:
+                      crossplane:
+                        description: Install Crossplane
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                        required: []
+                      argocd:
+                        description: Install Argo CD
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                          host:
+                            type: string
+                            default: acme.com
+                          repoURL:
+                            type: string
+                            default: https://github.com/vfarcic/SOMETHING
+                          destinationNamespace:
+                            type: string
+                            default: argo-cd
+                          sourcePath:
+                            type: string
+                            default: '.'
+                        required: []
+                      openfunction:
+                        description: Install OpenFunction
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                        required: []
+                      dapr:
+                        description: Install Dapr. Do not enable it if OpenFunction is enabled since it comes with Dapr.
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                        required: []
+                      traefik:
+                        description: Install Traefik.
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                        required: []
+                      dynatrace:
+                        description: Install Dynatrace operator. A secret `dynatrace` with tokens musts exist in the `dynatrace` Namespace.
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                          apiUrl:
+                            description: The URL of the Dynatrace API
+                            type: string
+                          oathCredentialsSecretName:
+                            description: The name of the secret with the OAuth credentials for the Dynatrace API.
+                            type: string
+                        required: []
+                      externalSecrets:
+                        description: Install External Secrets Operator (ESO)
+                        type: object
+                        properties:
+                          enabled:
+                            type: boolean
+                            default: false
+                          store:
+                            description: Whether to create secret store. If `true`, `creds` field needs to be set as well.
+                            type: boolean
+                          googleCredentialsKey:
+                            description: The key with Google credentials in the secret. Works only with clusters in Google Cloud.
+                            type: string
+                          awsAccessKeyIDKey:
+                            description: The key with Access Key ID in the secret. Works only with clusters in AWS.
+                            type: string
+                            default: accessKeyID
+                          awsSecretAccessKeyKey:
+                            description: The key with Secret Access Key in the secret. Works only with clusters in AWS.
+                            type: string
+                            default: secretAccessKey
+                          azureVaultUrl:
+                            description: The URL of Azure Vault. Works only with clusters in Azure.
+                            type: string
+                          secrets:
+                            description: List of secrets to be created from the secret store. The `store` parameter must be set to `true` for this feature to work.
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                fromSecret:
+                                  description: The name or the key of secret in the external secret store
+                                  type: string
+                                toSecret:
+                                  description: The name of the secret
+                                  type: string
+                                toNamespace:
+                                  description: The namespace of the secret
+                                  type: string
+                                type:
+                                  description: The type of the secret
+                                  type: string
+                                  default: Opaque
+                              required:
+                              - fromSecret
+                              - toSecret
+                              - toNamespace
+                  creds:
+                    description: The secret with hyperscaler credentials.
+                    type: object
+                    properties:
+                      name:
+                        description: The name of the secret
+                        type: string
+                      namespace:
+                        description: The namespace of the secret
+                        type: string
+                        default: crossplane-system
+                      keys:
+                        description: The keys in the secret
+                        type: array
+                        items:
+                          type: string
+                    required:
+                    - name
+                    - namespace
+                    - keys
+                required:
+                - nodeSize
+            required:
+            - id
+            - parameters
+          status:
+            type: object
+            properties:
+              clusterName:
+                description: The name of the cluster.
+                type: string
+              controlPlaneStatus:
+                description: The status of the control plane.
+                type: string
+              nodePoolStatus:
+                description: The status of the node pool.
+                type: string
+              field1:
+                description: A placeholder
+                type: string
+    additionalPrinterColumns:
+    - name: clusterName
+      type: string
+      jsonPath: '.status.clusterName'
+    - name: controlPlane
+      type: string
+      jsonPath: '.status.controlPlaneStatus'
+    - name: nodePool
+      type: string
+      jsonPath: '.status.nodePoolStatus'
