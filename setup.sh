@@ -77,7 +77,7 @@ kubectl apply --filename crossplane-config/dot-sql.yaml
 
 kubectl apply --filename crossplane-config/dot-app.yaml
 
-kubectl apply --filename crossplane-config/dot-kubernetes.yaml
+# kubectl apply --filename crossplane-config/dot-kubernetes.yaml
 
 helm upgrade --install argocd argo-cd \
     --repo https://argoproj.github.io/argo-helm \
