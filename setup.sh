@@ -135,8 +135,8 @@ if [[ "$HYPERSCALER" == "google" ]]; then
         --for=condition=healthy provider.pkg.crossplane.io \
         --all --timeout=600s
 
-    echo "apiVersion: gcp.upbound.io/v1beta1
-kind: ProviderConfig
+    echo "apiVersion: gcp.m.upbound.io/v1beta1
+kind: ClusterProviderConfig
 metadata:
   name: default
 spec:

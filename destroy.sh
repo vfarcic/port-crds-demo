@@ -10,7 +10,17 @@ Feel free to say "No" and inspect the script if you prefer setting up resources 
 # Destroy #
 ###########
 
-COUNTER=$(kubectl get managed --no-headers | wc -l)
+git pull
+
+rm -rf apps/*.yaml
+
+git add .
+
+git commit -m "Destroy"
+
+git push
+
+COUNTER=$(kubectl --namespace a-team get managed --no-headers | wc -l)
 
 while [ $COUNTER -ne 0 ]; do
     sleep 10
