@@ -45,9 +45,14 @@ kubectl create namespace a-team
 kubectl --namespace a-team apply \
     --filename crossplane-config/db-secret.yaml
 
-helm upgrade --install crossplane crossplane \
-    --repo https://charts.crossplane.io/stable \
-    --namespace crossplane-system --create-namespace --wait
+helm repo add crossplane https://charts.crossplane.io/stable
+
+helm repo update
+
+helm upgrade --install crossplane crossplane/crossplane \
+    --namespace crossplane-system --create-namespace \
+    --set provider.defaultActivations=\{"*.m.upbound.io","*.m.crossplane.io"\} \
+    --wait
 
 kubectl apply \
     --filename crossplane-config/provider-helm-incluster.yaml
